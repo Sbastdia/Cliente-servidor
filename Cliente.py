@@ -15,14 +15,15 @@ socket_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Conectamos usando connect_ex() en lugar de connect()
 # connect() retorna una excepcion
 # connect_ex() retorna un aviso de error
-socket_tcp.connect_ex(server_address)
+socket_tcp.connect_ex('server_address')
 events = selectors.EVENT_READ | selectors.EVENT_WRITE
 data = types.SimpleNamespace(connid='connid', msg_total=sum(len(m) for m in messages), recv_total=0, messages=list(messages), outb=b'')
 selector.register(socket_tcp, events, data=data)
 events = selector.select()
-for key, mask in events:
-    service_connection(key, mask)
+
 def service_connection(key, mask):
+    for key, mask in events:
+        service_connection(key, mask)
     sock = key.fileobj
     data = key.data
     if mask & selectors.EVENT_READ:
